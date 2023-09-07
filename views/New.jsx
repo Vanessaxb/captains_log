@@ -7,7 +7,7 @@ function New() {
             <form action="/logs" method="POST">
                 <input type="text" name ="title" required />
                 <input type="textarea" name="entry" required />
-                <input type="checkbox" name="shipIsBroken" value="false" required/>
+                <input type="checkbox" name="shipIsBroken" value="false"/>
                 <input type="submit" value="Post" />
             </form>
         </div>
