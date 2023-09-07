@@ -55,12 +55,25 @@ app.post("/logs", async (req, res) => {
  * ^ Index
  */
 app.get("/logs", async (req, res) => {
-    try {
-        const logs = await Logs.find({})
-        res.render("Index", { logs });
-    } catch (e) {
-        console.log(e);
-    }
+  try {
+    const logs = await Logs.find({});
+    res.render("Index", { logs });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+/**
+ *  ^ Show
+ */
+app.get("/logs/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const log = await Logs.findById(id);
+    res.render("Show", { log });
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 //^ Listening and connecting to DB
