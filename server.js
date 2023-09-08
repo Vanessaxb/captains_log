@@ -3,6 +3,7 @@ require("dotenv").config();
 const jsxEngine = require("jsx-view-engine");
 const mongoose = require("mongoose");
 const Logs = require("./models/logs");
+const methodOverride = require("method-override");
 
 //^ ======= Variables
 const app = express();
@@ -14,6 +15,7 @@ app.engine("jsx", jsxEngine());
 
 //^ ======= Middleware
 app.use(express.urlencoded({ extended: false }));
+app.use(methodOverride("_method"));
 app.use(express.json());
 
 //^ ==== Routes
@@ -75,6 +77,52 @@ app.get("/logs/:id", async (req, res) => {
     console.log(e);
   }
 });
+
+/**
+ * ^ Delete
+ */
+app.delete("/logs/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await Logs.findByIdAndDelete(id);
+    res.redirect("/logs");
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+/**
+ * ^ Edit
+ */
+app.get("/logs/:id/edit", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const log = await Logs.findById(id);
+        res.render("Edit", { log });
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+/**
+ * ^ Update
+ */
+app.put("/logs/:id", async (req, res) => {
+    const { id } = req.params;
+    if (req.body.shipIsBroken === "on") {
+      req.body.shipIsBroken = true;
+    } else {
+      req.body.shipIsBroken = false;
+    }
+    try {
+      await Logs.findByIdAndUpdate(id, req.body, {
+        new: true, //add this so it displys the updated post
+      });
+      res.redirect(`/logs/${id}`);
+    } catch (e) {
+      console.log(e);
+    }
+  });
 
 //^ Listening and connecting to DB
 mongoose.connect(process.env.MONGO_URI);
